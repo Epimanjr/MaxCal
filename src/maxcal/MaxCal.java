@@ -9,10 +9,12 @@ import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,8 +31,17 @@ public class MaxCal {
     public static void main(String[] args) {
         // Get path
         String path = (args.length == 0) ? "cal.ics" : args[0];
-        System.out.println("Lecture du calendrier dans " + path);
+
+        File f = new File("ics");
+        for(File file : f.listFiles()) {
+            showCalendar(file.getAbsolutePath());
+            System.out.println("\n----------------------\n");
+        }
+    }
+    
+    public static void showCalendar(String path) {
         // Get calendar
+        System.out.println("Lecture du calendrier dans " + path);
         String str = getFullText(path);
         ICalendar ical = Biweekly.parse(str).first();
 
@@ -54,9 +65,14 @@ public class MaxCal {
             }
         }
 
+        Date dateAujourdhui = new Date(System.currentTimeMillis());
+        System.out.println(dateAujourdhui + " <-- MAINTENANT");
         // Loop for print
         for (VEvent event : listeEvenements) {
-            System.out.println(event.getDateStart().getValue() + "-" + event.getSummary().getValue() + " ("+event.getLocation().getValue()+")");
+            int compare = event.getDateStart().getValue().compareTo(dateAujourdhui);
+            if (compare == 1) {
+                System.out.println(event.getDateStart().getValue() + " TO " + event.getDateEnd().getValue() + "-" + event.getSummary().getValue() + " (" + event.getLocation().getValue() + ")");
+            }
         }
     }
 
