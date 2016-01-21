@@ -33,12 +33,12 @@ public class MaxCal {
         String path = (args.length == 0) ? "cal.ics" : args[0];
 
         File f = new File("ics");
-        for(File file : f.listFiles()) {
+        for (File file : f.listFiles()) {
             showCalendar(file.getAbsolutePath());
             System.out.println("\n----------------------\n");
         }
     }
-    
+
     public static void showCalendar(String path) {
         // Get calendar
         System.out.println("Lecture du calendrier dans " + path);
@@ -66,12 +66,17 @@ public class MaxCal {
         }
 
         Date dateAujourdhui = new Date(System.currentTimeMillis());
-        System.out.println(dateAujourdhui + " <-- MAINTENANT");
+        System.out.println(dateAujourdhui + " <-- MAINTENANT\n");
         // Loop for print
         for (VEvent event : listeEvenements) {
             int compare = event.getDateStart().getValue().compareTo(dateAujourdhui);
             if (compare == 1) {
                 System.out.println(event.getDateStart().getValue() + " TO " + event.getDateEnd().getValue() + "-" + event.getSummary().getValue() + " (" + event.getLocation().getValue() + ")");
+            } else {
+                int compareEnd = event.getDateEnd().getValue().compareTo(dateAujourdhui);
+                if (compareEnd == 1) {
+                    System.out.println("EN COURS\t" + event.getSummary().getValue() + " (" + event.getLocation().getValue() + ") fin à " + event.getDateEnd().getValue());
+                }
             }
         }
     }
