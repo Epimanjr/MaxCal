@@ -28,7 +28,7 @@ public class Manipulation {
     }
 
     public static void printEvent(VEvent event) {
-        System.out.println(event.getDateStart().getValue() + " TO " + event.getDateEnd().getValue() + "-" + event.getSummary().getValue() + " (" + event.getLocation().getValue() + ")");
+        System.out.println(event.getDateStart().getValue() + " TO " + event.getDateEnd().getValue() + "\n\t\t" + event.getSummary().getValue() + " (" + event.getLocation().getValue() + ")");
     }
 
     /**
