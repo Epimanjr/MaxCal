@@ -20,9 +20,29 @@ import java.util.logging.Logger;
  */
 public class Manipulation {
 
+    /**
+     * Main method.
+     * @param args Generally a path
+     */
     public static void main(String[] args) {
+        // Get Path
+        String path = getPathFromArguments(args);
+        // Init 
+        Data.initData();
+        Data.initListEvents(path);
+        // Launch 
+        Shell.launchShell();
+    }
+    
+    /**
+     * Get path, depends on arguments.
+     * @param args Arguments
+     * @return Path
+     */
+    public static String getPathFromArguments(String[] args) {
         boolean pathOK = false;
         String path = "";
+        // Test argument
         if(args.length == 1) {
             File f = new File(args[0]);
             if(f.exists()) {
@@ -32,6 +52,7 @@ public class Manipulation {
                 System.err.println("Error: file doesn't exist.");
             }
         } 
+        // Loop to list files in ics folder
         if(!pathOK) {
             File f = new File("ics");
             File[] files = f.listFiles();
@@ -47,10 +68,7 @@ public class Manipulation {
             }
             path = files[choix].getAbsolutePath();
         }
-        Data.initData();
-        Data.initListEvents(path);
-        
-        Shell.launchShell();
+        return path;
     }
 
     public static void printEvent(VEvent event) {
