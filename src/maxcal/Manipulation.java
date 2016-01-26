@@ -8,8 +8,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +35,8 @@ public class Manipulation {
         // Launch 
         Shell.launchShell();
     }
+    
+    
     
     /**
      * Get path, depends on arguments.
@@ -72,9 +76,42 @@ public class Manipulation {
     }
 
     public static void printEvent(VEvent event) {
-        System.out.println(event.getDateStart().getValue() + " TO " + event.getDateEnd().getValue() + "\n\t\t" + event.getSummary().getValue() + " (" + event.getLocation().getValue() + ")");
+        SimpleDateFormat ft = new SimpleDateFormat("HH:mm");
+        String dateStart = ft.format(event.getDateStart().getValue());
+         String dateEnd = ft.format(event.getDateEnd().getValue());
+        System.out.println("\t" + dateStart + " TO " + dateEnd + "\t" + event.getSummary().getValue() + " (" + event.getLocation().getValue() + ")");
     }
 
+     public static ArrayList<String> getDates(ArrayList<VEvent> listEvents) {
+        SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
+        ArrayList<String> listDates = new ArrayList<>();
+        for(VEvent event : listEvents) {
+            String date = ft.format(event.getDateStart().getValue());
+            if(!listDates.contains(date)) {
+                listDates.add(date);
+            }
+        }
+        return listDates;
+    }
+    
+    public static HashMap<String, ArrayList<VEvent>> convertListToMap(ArrayList<VEvent> listEvents) {
+        SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
+        
+        HashMap<String, ArrayList<VEvent>> map = new HashMap<>();
+        for (VEvent event : listEvents) {
+            String date = ft.format(event.getDateStart().getValue());
+            if (map.containsKey(date)) {
+                ArrayList<VEvent> listTmp = map.get(date);
+                listTmp.add(event);
+                map.replace(date, listTmp);
+            } else {
+                ArrayList<VEvent> listTmp = new ArrayList<>();
+                listTmp.add(event);
+                map.put(date, listTmp);
+            }
+        }
+        return map;
+    }
     /**
      * Get only events in the future.
      *

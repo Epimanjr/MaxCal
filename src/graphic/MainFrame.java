@@ -8,14 +8,14 @@ package graphic;
 import biweekly.component.VEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import maxcal.Data;
+import static maxcal.Manipulation.convertListToMap;
+import static maxcal.Manipulation.getDates;
 
 /**
  *
@@ -187,36 +187,7 @@ public class MainFrame extends javax.swing.JFrame {
         setTableWithEvents(Data.listEvents);
     }//GEN-LAST:event_buttonLoadActionPerformed
 
-    public static ArrayList<String> getDates(ArrayList<VEvent> listEvents) {
-        SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
-        ArrayList<String> listDates = new ArrayList<>();
-        for(VEvent event : listEvents) {
-            String date = ft.format(event.getDateStart().getValue());
-            if(!listDates.contains(date)) {
-                listDates.add(date);
-            }
-        }
-        return listDates;
-    }
-    
-    public static HashMap<String, ArrayList<VEvent>> convertListToMap(ArrayList<VEvent> listEvents) {
-        SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
-        
-        HashMap<String, ArrayList<VEvent>> map = new HashMap<>();
-        for (VEvent event : listEvents) {
-            String date = ft.format(event.getDateStart().getValue());
-            if (map.containsKey(date)) {
-                ArrayList<VEvent> listTmp = map.get(date);
-                listTmp.add(event);
-                map.replace(date, listTmp);
-            } else {
-                ArrayList<VEvent> listTmp = new ArrayList<>();
-                listTmp.add(event);
-                map.put(date, listTmp);
-            }
-        }
-        return map;
-    }
+   
 
     private int computeSizeWithMap(HashMap<String, ArrayList<VEvent>> map) {
         Set set = map.keySet();
