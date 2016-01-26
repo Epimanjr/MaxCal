@@ -4,6 +4,7 @@ import biweekly.Biweekly;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,7 +21,32 @@ import java.util.logging.Logger;
 public class Manipulation {
 
     public static void main(String[] args) {
-        String path = "ics/20160125-MasterMIAGE.ics";
+        boolean pathOK = false;
+        String path = "";
+        if(args.length == 1) {
+            File f = new File(args[0]);
+            if(f.exists()) {
+                path = args[0];
+                pathOK = true;
+            } else {
+                System.err.println("Error: file doesn't exist.");
+            }
+        } 
+        if(!pathOK) {
+            File f = new File("ics");
+            File[] files = f.listFiles();
+            for(int i=0;i<files.length;i++) {
+                System.out.println(i + " -> " + files[i].getAbsolutePath());
+            }
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Quel fichier? ");
+            int choix = sc.nextInt();
+            if(choix < 0 || choix > files.length) {
+                System.err.println("Bad choicd!");
+                System.exit(0);
+            }
+            path = files[choix].getAbsolutePath();
+        }
         Data.initData();
         Data.initListEvents(path);
         
