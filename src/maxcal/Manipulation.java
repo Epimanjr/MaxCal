@@ -31,9 +31,10 @@ public class Manipulation {
         // Get Path
         String path = getPathFromArguments(args);
         // Init 
+        Data.initConfig();
         Data.initData();
         Data.initListEvents(path);
-        Data.initConfig();
+
         // Launch 
         Shell.launchShell();
     }

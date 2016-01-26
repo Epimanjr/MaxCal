@@ -80,7 +80,8 @@ public class Shell {
      */
     public static void open(Scanner sc) {
         if (!Data.listEvents.isEmpty()) {
-            VEvent event = Data.listEvents.get(0);
+            VEvent event = Data.listEventsForGroup.get(0);
+            
             Manipulation.printEvent(event);
             String name = event.getSummary().getValue();
             if (Data.listLinks.containsKey(name)) {
@@ -101,6 +102,11 @@ public class Shell {
                             try {
                                 for (String str : listURL) {
                                     Desktop.getDesktop().browse(new URI(str));
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException ex) {
+                                        Logger.getLogger(Shell.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
                                 }
 
                             } catch (IOException | URISyntaxException ex) {

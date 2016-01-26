@@ -8,15 +8,9 @@ package maxcal;
 import biweekly.component.VEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -39,7 +33,12 @@ public class Data {
      * List of future events.
      */
     public static ArrayList<VEvent> listEvents;
-    
+
+    /**
+     * List of future events, no bad group.
+     */
+    public static ArrayList<VEvent> listEventsForGroup;
+
     /**
      * All config.
      */
@@ -52,6 +51,15 @@ public class Data {
      */
     public static void initListEvents(String path) {
         listEvents = getEventsFuture(getCalendarFromFile(path));
+
+        listEventsForGroup = new ArrayList<>();
+        for (VEvent eventTmp : Data.listEvents) {
+            String groupe = Data.config.get("groupe");
+            String str = (groupe.equals("G1")) ? "G2" : "G1";
+            if (eventTmp.getSummary().getValue().startsWith("CM") || !eventTmp.getSummary().getValue().contains(str)) {
+                listEventsForGroup.add(eventTmp);
+            }
+        }
     }
 
     /**
@@ -61,7 +69,7 @@ public class Data {
         config = new HashMap<>();
         try {
             BufferedReader br = new BufferedReader(new FileReader("data/config.txt"));
-            while(br.ready()) {
+            while (br.ready()) {
                 String line = br.readLine();
                 String[] lines = line.split("=");
                 config.put(lines[0].trim(), lines[1].trim());
@@ -73,34 +81,44 @@ public class Data {
             Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Init data.
      */
     public static void initData() {
         listLinks = new HashMap<>();
-        File f = new File("data/data.txt");
+        File f = new File("data/links.txt");
         if (f.exists()) {
             try {
                 // Read file
-                ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data/data.txt"));
-                Data.listLinks = (HashMap<String, ArrayList<String>>) ois.readObject();
-                ois.close();
-            } catch (IOException | ClassNotFoundException ex) {
+                BufferedReader br = new BufferedReader(new FileReader(f));
+                while(br.ready()) {
+                    String line = br.readLine();
+                    String[] lines = line.split("=>");
+                    if(lines.length == 2) {
+                        if(listLinks.containsKey(lines[0])) {
+                            ArrayList<String> listeTmp = listLinks.get(lines[0]);
+                            listeTmp.add(lines[1]);
+                            listLinks.replace(lines[0], listeTmp);
+                        } else {
+                            ArrayList<String> listeTmp = new ArrayList<>();
+                            listeTmp.add(lines[1]);
+                            listLinks.put(lines[0], listeTmp);
+                        }
+                    }
+                }
+                br.close();
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
                 Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             System.err.println("Error: data file doesn't exist, no data, empty list.");
         }
     }
-    
+
     public static void writeData() {
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data/data.txt"));
-            oos.writeObject(Data.listLinks);
-            oos.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }
 }
