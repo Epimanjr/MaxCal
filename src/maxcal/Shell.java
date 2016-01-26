@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static maxcal.Manipulation.convertListToMap;
-import static maxcal.Manipulation.printEvent;
 
 /**
  *
@@ -61,12 +60,15 @@ public class Shell {
     public static void listEvents() {
         ArrayList<String> listDates = Manipulation.getDates(Data.listEvents);
         HashMap<String, ArrayList<VEvent>> map = convertListToMap(Data.listEvents);
-       for(String date : listDates) {
-           System.out.println("Le " + date);
+        for (String date : listDates) {
+            System.out.println("Le " + date);
             ArrayList<VEvent> listeTmp = map.get(date);
             for (VEvent event : listeTmp) {
-               Manipulation.printEvent(event);
-               
+                String groupe = Data.config.get("groupe");
+                String str = (groupe.equals("G1")) ? "G2" : "G1";
+                if (event.getSummary().getValue().startsWith("CM") || !event.getSummary().getValue().contains(str)) {
+                    Manipulation.printEvent(event);
+                }
             }
         }
     }

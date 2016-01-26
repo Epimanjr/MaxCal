@@ -24,6 +24,7 @@ public class Manipulation {
 
     /**
      * Main method.
+     *
      * @param args Generally a path
      */
     public static void main(String[] args) {
@@ -32,14 +33,14 @@ public class Manipulation {
         // Init 
         Data.initData();
         Data.initListEvents(path);
+        Data.initConfig();
         // Launch 
         Shell.launchShell();
     }
-    
-    
-    
+
     /**
      * Get path, depends on arguments.
+     *
      * @param args Arguments
      * @return Path
      */
@@ -47,27 +48,27 @@ public class Manipulation {
         boolean pathOK = false;
         String path = "";
         // Test argument
-        if(args.length == 1) {
+        if (args.length == 1) {
             File f = new File(args[0]);
-            if(f.exists()) {
+            if (f.exists()) {
                 path = args[0];
                 pathOK = true;
             } else {
                 System.err.println("Error: file doesn't exist.");
             }
-        } 
+        }
         // Loop to list files in ics folder
-        if(!pathOK) {
-            File f = new File("ics");
+        if (!pathOK) {
+            File f = new File("data/ics");
             File[] files = f.listFiles();
-            for(int i=0;i<files.length;i++) {
+            for (int i = 0; i < files.length; i++) {
                 System.out.println(i + " -> " + files[i].getAbsolutePath());
             }
             Scanner sc = new Scanner(System.in);
             System.out.print("Quel fichier? ");
             int choix = sc.nextInt();
-            if(choix < 0 || choix > files.length) {
-                System.err.println("Bad choicd!");
+            if (choix < 0 || choix > files.length) {
+                System.err.println("Bad choice!");
                 System.exit(0);
             }
             path = files[choix].getAbsolutePath();
@@ -78,25 +79,25 @@ public class Manipulation {
     public static void printEvent(VEvent event) {
         SimpleDateFormat ft = new SimpleDateFormat("HH:mm");
         String dateStart = ft.format(event.getDateStart().getValue());
-         String dateEnd = ft.format(event.getDateEnd().getValue());
+        String dateEnd = ft.format(event.getDateEnd().getValue());
         System.out.println("\t" + dateStart + " TO " + dateEnd + "\t" + event.getSummary().getValue() + " (" + event.getLocation().getValue() + ")");
     }
 
-     public static ArrayList<String> getDates(ArrayList<VEvent> listEvents) {
+    public static ArrayList<String> getDates(ArrayList<VEvent> listEvents) {
         SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
         ArrayList<String> listDates = new ArrayList<>();
-        for(VEvent event : listEvents) {
+        for (VEvent event : listEvents) {
             String date = ft.format(event.getDateStart().getValue());
-            if(!listDates.contains(date)) {
+            if (!listDates.contains(date)) {
                 listDates.add(date);
             }
         }
         return listDates;
     }
-    
+
     public static HashMap<String, ArrayList<VEvent>> convertListToMap(ArrayList<VEvent> listEvents) {
         SimpleDateFormat ft = new SimpleDateFormat("dd.MM.yyyy");
-        
+
         HashMap<String, ArrayList<VEvent>> map = new HashMap<>();
         for (VEvent event : listEvents) {
             String date = ft.format(event.getDateStart().getValue());
@@ -112,6 +113,7 @@ public class Manipulation {
         }
         return map;
     }
+
     /**
      * Get only events in the future.
      *

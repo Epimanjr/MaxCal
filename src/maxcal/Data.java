@@ -6,9 +6,12 @@
 package maxcal;
 
 import biweekly.component.VEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,6 +39,11 @@ public class Data {
      * List of future events.
      */
     public static ArrayList<VEvent> listEvents;
+    
+    /**
+     * All config.
+     */
+    public static HashMap<String, String> config;
 
     /**
      * Init list of events.
@@ -46,6 +54,26 @@ public class Data {
         listEvents = getEventsFuture(getCalendarFromFile(path));
     }
 
+    /**
+     * Init config.
+     */
+    public static void initConfig() {
+        config = new HashMap<>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("data/config.txt"));
+            while(br.ready()) {
+                String line = br.readLine();
+                String[] lines = line.split("=");
+                config.put(lines[0].trim(), lines[1].trim());
+            }
+            br.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Data.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     /**
      * Init data.
      */
